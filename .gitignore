@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+.env
+.venv/
+.crucible-reports/
+.claude/
+CLAUDE.md
+AGENTS.md
+.agents/
+.crush/
+.goose/
+.junie/
+skills-lock.json
