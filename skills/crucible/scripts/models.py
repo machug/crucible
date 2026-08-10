@@ -331,8 +331,11 @@ def call_antigravity_model(
     agy_model = resolve_antigravity_model(model)
     full_prompt = f"SYSTEM INSTRUCTIONS:\n{system_prompt}\n\nUSER REQUEST:\n{user_message}"
 
+    # Prompt goes via stdin, not argv — project contexts can exceed the OS
+    # per-argument size limit (128 KiB on Linux). Piped stdin puts agy in
+    # print mode.
     cmd = [
-        ANTIGRAVITY_PATH, "-p", full_prompt,
+        ANTIGRAVITY_PATH,
         "--output-format", "json",
         "--print-timeout", f"{timeout}s",
     ]
@@ -341,8 +344,8 @@ def call_antigravity_model(
 
     try:
         result = subprocess.run(
-            cmd, capture_output=True, text=True, timeout=timeout + 30,
-            stdin=subprocess.DEVNULL,
+            cmd, input=full_prompt, capture_output=True, text=True,
+            timeout=timeout + 30,
         )
     except subprocess.TimeoutExpired:
         raise RuntimeError(f"Antigravity CLI timed out after {timeout}s")
