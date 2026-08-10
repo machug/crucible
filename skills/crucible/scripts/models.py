@@ -489,11 +489,22 @@ def call_single_model(
 
         except Exception as e:
             last_error = str(e)
+            # Bedrock: keep the original service diagnostic (AccessDenied can be
+            # IAM/SCP, Marketplace, or data-share; Validation can be bad request
+            # params) and append a hint. The hint phrasing doubles as the
+            # non-retryable classifier match so these still fail fast.
             if bedrock_mode:
                 if "AccessDeniedException" in last_error:
-                    last_error = f"Model not enabled in your Bedrock account: {display_model}"
+                    last_error = (
+                        f"{last_error}\n  Hint: model not enabled in your Bedrock "
+                        f"account ({display_model})? Also check IAM/SCP, Marketplace "
+                        f"subscription, and data-share opt-in (claude-fable-5)."
+                    )
                 elif "ValidationException" in last_error:
-                    last_error = f"Invalid Bedrock model ID: {display_model}"
+                    last_error = (
+                        f"{last_error}\n  Hint: invalid Bedrock model ID "
+                        f"({display_model})? Or invalid request parameters."
+                    )
             if "not supported when using codex with a chatgpt account" in last_error.lower():
                 last_error = f"{last_error}\n  Hint: {CODEX_CHATGPT_HINT}"
             if is_non_retryable_error(last_error):

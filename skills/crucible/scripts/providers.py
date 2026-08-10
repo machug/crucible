@@ -300,6 +300,34 @@ def validate_model_credentials(models: list[str]) -> tuple[list[str], list[str]]
     return valid, invalid
 
 
+def describe_invalid_models(invalid: list[str]) -> list[str]:
+    """Human-actionable failure lines for models that failed validation.
+
+    CLI providers (codex, antigravity, gemini-cli) have no API key — telling
+    the user "missing credentials" sends them to the wrong remedy.
+    """
+    lines = []
+    for m in invalid:
+        if m.startswith("codex/"):
+            lines.append(
+                f"{m}: Codex CLI not installed. Install: npm install -g @openai/codex && codex login"
+            )
+        elif m == "antigravity" or m.startswith("antigravity/"):
+            lines.append(
+                f"{m}: Antigravity CLI (agy) not installed. Install: "
+                f"curl -fsSL https://antigravity.google/cli/install.sh | bash "
+                f"— then run `agy` once to sign in."
+            )
+        elif m.startswith("gemini-cli/"):
+            lines.append(
+                f"{m}: Gemini CLI not installed (consumer service retired 2026-06-18). "
+                f"Use antigravity/<model> or gemini/<model> instead."
+            )
+        else:
+            lines.append(f"{m}: missing API key (run 'crucible.py providers' for setup)")
+    return lines
+
+
 def list_providers():
     """List all supported providers and their API key status."""
     providers = [

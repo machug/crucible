@@ -49,6 +49,7 @@ from prompts import (
     CHALLENGE_PROMPT_TEMPLATE,
 )
 from providers import (
+    describe_invalid_models,
     get_available_providers,
     list_providers,
     validate_model_credentials,
@@ -63,7 +64,9 @@ def cmd_review(args: argparse.Namespace) -> int:
     # Validate credentials
     valid, invalid = validate_model_credentials(models)
     if invalid:
-        print(f"Error: Missing credentials for: {', '.join(invalid)}", file=sys.stderr)
+        print("Error: Unusable models:", file=sys.stderr)
+        for line in describe_invalid_models(invalid):
+            print(f"  {line}", file=sys.stderr)
         if not valid:
             sys.exit(2)
         print(f"Continuing with: {', '.join(valid)}", file=sys.stderr)
@@ -162,7 +165,9 @@ def cmd_challenge(args: argparse.Namespace) -> int:
 
     valid, invalid = validate_model_credentials(models)
     if invalid:
-        print(f"Error: Missing credentials for: {', '.join(invalid)}", file=sys.stderr)
+        print("Error: Unusable models:", file=sys.stderr)
+        for line in describe_invalid_models(invalid):
+            print(f"  {line}", file=sys.stderr)
         if not valid:
             sys.exit(2)
         models = valid

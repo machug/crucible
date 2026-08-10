@@ -202,6 +202,11 @@ class TestAntigravityProvider:
         cmd = mock_run.call_args[0][0]
         assert "--model" in cmd and "gemini-3.1-pro-high" in cmd
         assert "--output-format" in cmd and "json" in cmd
+        # Prompt must travel via stdin, never argv — large project contexts
+        # exceed the Linux 128 KiB per-argument limit.
+        stdin_input = mock_run.call_args.kwargs["input"]
+        assert "SYSTEM INSTRUCTIONS:" in stdin_input and "user" in stdin_input
+        assert not any("USER REQUEST" in arg for arg in cmd)
 
     def test_call_raises_on_error_status(self):
         payload = {
@@ -290,6 +295,128 @@ class TestAntigravityProvider:
             "input": 0.0,
             "output": 0.0,
         }
+
+
+class TestCodexStructuredErrors:
+    def _fake_proc(self, stdout, returncode=0, stderr=""):
+        return type(
+            "P", (), {"returncode": returncode, "stdout": stdout, "stderr": stderr}
+        )()
+
+    def test_error_event_surfaces_structured_message(self):
+        stdout = json.dumps(
+            {
+                "type": "error",
+                "message": "The 'gpt-5.3-codex' model is not supported when using "
+                "Codex with a ChatGPT account.",
+            }
+        )
+        with (
+            patch("models.CODEX_AVAILABLE", True),
+            patch("models.CODEX_PATH", "/usr/bin/codex"),
+            patch("models.subprocess.run", return_value=self._fake_proc(stdout)),
+        ):
+            with pytest.raises(RuntimeError, match="not supported when using Codex"):
+                models.call_codex_model("sys", "user", "codex/gpt-5.3-codex")
+
+    def test_turn_failed_nested_error_message(self):
+        stdout = json.dumps(
+            {"type": "turn.failed", "error": {"message": "model_not_found: gpt-9"}}
+        )
+        with (
+            patch("models.CODEX_AVAILABLE", True),
+            patch("models.CODEX_PATH", "/usr/bin/codex"),
+            patch("models.subprocess.run", return_value=self._fake_proc(stdout)),
+        ):
+            with pytest.raises(RuntimeError, match="model_not_found"):
+                models.call_codex_model("sys", "user", "codex/gpt-9")
+
+    def test_structured_error_preferred_over_stderr_noise(self):
+        stdout = json.dumps({"type": "error", "message": "invalid_request_error: bad model"})
+        proc = self._fake_proc(stdout, returncode=1, stderr="DeprecationWarning: noise")
+        with (
+            patch("models.CODEX_AVAILABLE", True),
+            patch("models.CODEX_PATH", "/usr/bin/codex"),
+            patch("models.subprocess.run", return_value=proc),
+        ):
+            with pytest.raises(RuntimeError, match="invalid_request_error"):
+                models.call_codex_model("sys", "user", "codex/bogus")
+
+    def test_success_path_unaffected(self):
+        lines = [
+            json.dumps(
+                {
+                    "type": "item.completed",
+                    "item": {"type": "agent_message", "text": "review text"},
+                }
+            ),
+            json.dumps(
+                {
+                    "type": "turn.completed",
+                    "usage": {"input_tokens": 11, "output_tokens": 7},
+                }
+            ),
+        ]
+        with (
+            patch("models.CODEX_AVAILABLE", True),
+            patch("models.CODEX_PATH", "/usr/bin/codex"),
+            patch("models.subprocess.run", return_value=self._fake_proc("\n".join(lines))),
+        ):
+            text, inp, out = models.call_codex_model("sys", "user", "codex/gpt-5.5")
+        assert (text, inp, out) == ("review text", 11, 7)
+
+
+class TestBedrockErrorRewrite:
+    def test_access_denied_keeps_original_and_appends_hint(self):
+        def raise_access_denied(**kwargs):
+            raise RuntimeError(
+                "AccessDeniedException: You don't have access to the model with the specified model ID."
+            )
+
+        with (
+            patch("models.completion", side_effect=raise_access_denied),
+            patch("models.time.sleep") as mock_sleep,
+        ):
+            result = models.call_single_model(
+                "claude-opus-5", "sys", "user", "investor", "progress",
+                bedrock_mode=True,
+            )
+        mock_sleep.assert_not_called()  # classifier fast-fails on the hint phrase
+        assert "AccessDeniedException" in result.error  # original preserved
+        assert "model not enabled in your Bedrock account" in result.error
+
+    def test_validation_exception_keeps_original_and_appends_hint(self):
+        def raise_validation(**kwargs):
+            raise RuntimeError("ValidationException: malformed input request")
+
+        with (
+            patch("models.completion", side_effect=raise_validation),
+            patch("models.time.sleep") as mock_sleep,
+        ):
+            result = models.call_single_model(
+                "bogus.model", "sys", "user", "investor", "progress",
+                bedrock_mode=True,
+            )
+        mock_sleep.assert_not_called()
+        assert "ValidationException" in result.error
+        assert "invalid Bedrock model ID" in result.error
+
+
+class TestInvalidModelMessaging:
+    def test_antigravity_message_mentions_agy_not_credentials(self):
+        lines = providers.describe_invalid_models(["antigravity/gemini-3.1-pro-high"])
+        assert len(lines) == 1
+        assert "agy" in lines[0]
+        assert "credentials" not in lines[0].lower()
+        assert "api key" not in lines[0].lower()
+
+    def test_codex_message_mentions_install(self):
+        lines = providers.describe_invalid_models(["codex/gpt-5.5"])
+        assert "npm install -g @openai/codex" in lines[0]
+
+    def test_api_key_message_for_litellm_models(self):
+        lines = providers.describe_invalid_models(["zai/glm-5.2"])
+        assert "missing API key" in lines[0]
 
 
 class TestReasoningModelDetection:
