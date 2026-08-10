@@ -26,7 +26,7 @@ allowed-tools: Bash, Read, Write, Edit, Agent, AskUserQuestion, WebFetch, WebSea
           ║                                                       ║
           ║  Skill.......: crucible                               ║
           ║  Author......: machug          (hughtec.com)          ║
-          ║  Version.....: 0.1.0                                  ║
+          ║  Version.....: 0.2.0                                  ║
           ║  Released....: 2026                                   ║
           ║  License.....: MIT                                    ║
           ║  Requires....: Python 3.10+, litellm                  ║
@@ -59,19 +59,29 @@ Multi-LLM adversarial project review. Gathers project context and sends it to mu
 
 | Provider   | API Key Env Var        | Example Models |
 |------------|------------------------|----------------|
-| OpenAI     | `OPENAI_API_KEY`       | `gpt-5.4`, `gpt-5.4-pro`, `o3-pro`, `o4-mini` |
-| Anthropic  | `ANTHROPIC_API_KEY`    | `claude-opus-4-6`, `claude-sonnet-4-6` |
-| Google     | `GEMINI_API_KEY`       | `gemini/gemini-3.1-pro-preview`, `gemini/gemini-2.5-pro` |
-| xAI        | `XAI_API_KEY`          | `xai/grok-4.20-0309-reasoning`, `xai/grok-4-0709` |
+| OpenAI     | `OPENAI_API_KEY`       | `gpt-5.6-sol`, `gpt-5.6-terra`, `gpt-5.6-luna`, `gpt-5.5`, `gpt-5.5-pro` |
+| Anthropic  | `ANTHROPIC_API_KEY`    | `claude-fable-5`, `claude-opus-5`, `claude-sonnet-5`, `claude-haiku-4-5` |
+| Google     | `GEMINI_API_KEY`       | `gemini/gemini-3.1-pro-preview`, `gemini/gemini-3.6-flash` |
+| xAI        | `XAI_API_KEY`          | `xai/grok-4.5`, `xai/grok-4.3`, `xai/grok-4.20-0309-reasoning` |
 | Azure AI   | `AZURE_AI_API_KEY`     | `foundry/<deployment-name>` |
 | Mistral    | `MISTRAL_API_KEY`      | `mistral/mistral-large` |
 | Groq       | `GROQ_API_KEY`         | `groq/llama-3.3-70b-versatile` |
-| OpenRouter | `OPENROUTER_API_KEY`   | `openrouter/openai/gpt-5.2-pro` |
-| Deepseek   | `DEEPSEEK_API_KEY`     | `deepseek/deepseek-chat` |
-| ZAI (GLM)  | `ZAI_API_KEY`          | `zai/glm-5.1`, `zai/glm-5-turbo` |
-| Moonshot   | `MOONSHOT_API_KEY`     | `moonshot/kimi-k2.5` |
-| Codex CLI  | (ChatGPT subscription) | `codex/gpt-5.3-codex` |
-| Gemini CLI | (Google account)       | `gemini-cli/gemini-3.1-pro-preview` |
+| OpenRouter | `OPENROUTER_API_KEY`   | `openrouter/openai/gpt-5.5-pro` |
+| Deepseek   | `DEEPSEEK_API_KEY`     | `deepseek/deepseek-v4-pro`, `deepseek/deepseek-v4-flash` |
+| ZAI (GLM)  | `ZAI_API_KEY`          | `zai/glm-5.2`, `zai/glm-5.1` |
+| Moonshot   | `MOONSHOT_API_KEY`     | `moonshot/kimi-k3` |
+| MiniMax    | `MINIMAX_API_KEY`      | `minimax/MiniMax-M3` |
+| Codex CLI  | (ChatGPT subscription) | `codex/gpt-5.6-sol`, `codex/gpt-5.5` |
+| Antigravity | (Google account)      | `antigravity/gemini-3.1-pro-high` (`agy models` lists all) |
+| Gemini CLI | (retired 2026-06-18)   | `gemini-cli/...` — enterprise only; use `antigravity/` or `gemini/` |
+
+**Codex CLI note:** With ChatGPT-account auth, Codex serves only the ChatGPT lineup
+(`gpt-5.6-sol`/`terra`/`luna`, `gpt-5.5`). `gpt-5.3-codex` and `gpt-5.5-pro` need
+Codex API-key auth or the `OPENAI_API_KEY` route. Crucible warns upfront and
+fails fast (no retries) on these deterministic rejections.
+
+**Antigravity note:** Run `agy` once interactively (Google sign-in) before
+headless use. Install: `curl -fsSL https://antigravity.google/cli/install.sh | bash`
 
 **Discover latest models:** Run `cd ${CLAUDE_PLUGIN_ROOT}/skills/crucible/scripts && python3 crucible.py discover-models`
 
@@ -277,13 +287,13 @@ Ask the user if they want to export critical findings and recommendations as iss
 
 ```bash
 # Run review
-cd ${CLAUDE_PLUGIN_ROOT}/skills/crucible/scripts && python3 crucible.py review --models gpt-5.4,xai/grok-4-0709 --context context.json
+cd ${CLAUDE_PLUGIN_ROOT}/skills/crucible/scripts && python3 crucible.py review --models gpt-5.6-sol,xai/grok-4.5 --context context.json
 
 # Specific dimensions only
-cd ${CLAUDE_PLUGIN_ROOT}/skills/crucible/scripts && python3 crucible.py review --models gpt-5.4 --context ctx.json --dimensions progress,code-quality
+cd ${CLAUDE_PLUGIN_ROOT}/skills/crucible/scripts && python3 crucible.py review --models gpt-5.6-sol --context ctx.json --dimensions progress,code-quality
 
 # Cross-examination round
-cd ${CLAUDE_PLUGIN_ROOT}/skills/crucible/scripts && python3 crucible.py challenge --models gpt-5.4,xai/grok-4-0709 --reviews reviews.json
+cd ${CLAUDE_PLUGIN_ROOT}/skills/crucible/scripts && python3 crucible.py challenge --models gpt-5.6-sol,xai/grok-4.5 --reviews reviews.json
 
 # List providers
 cd ${CLAUDE_PLUGIN_ROOT}/skills/crucible/scripts && python3 crucible.py providers
