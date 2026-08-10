@@ -1,6 +1,6 @@
 {
   "name": "crucible",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Multi-LLM adversarial project review. Evaluates progress, tech stack, code quality, CI/CD, and plan drift through parallel critique from multiple AI models.",
   "author": {
     "name": "Hugh McIntyre"

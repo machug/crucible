@@ -7,9 +7,9 @@ a different adversarial persona and dimension. Produces a structured report
 with severity ratings and actionable recommendations.
 
 Usage:
-    python3 crucible.py review --models gpt-5.4,xai/grok-4-0709 --context context.json
-    python3 crucible.py review --models gpt-5.4 --context context.json --dimensions progress,code-quality
-    python3 crucible.py challenge --models gpt-5.4,xai/grok-4-0709 --reviews reviews.json
+    python3 crucible.py review --models gpt-5.6-sol,xai/grok-4.5 --context context.json
+    python3 crucible.py review --models gpt-5.6-sol --context context.json --dimensions progress,code-quality
+    python3 crucible.py challenge --models gpt-5.6-sol,xai/grok-4.5 --reviews reviews.json
     python3 crucible.py providers
     python3 crucible.py discover-models
     python3 crucible.py dimensions
@@ -52,6 +52,7 @@ from providers import (
     get_available_providers,
     list_providers,
     validate_model_credentials,
+    warn_codex_chatgpt_model_support,
 )
 
 
@@ -67,6 +68,8 @@ def cmd_review(args: argparse.Namespace) -> int:
             sys.exit(2)
         print(f"Continuing with: {', '.join(valid)}", file=sys.stderr)
         models = valid
+
+    warn_codex_chatgpt_model_support(models)
 
     # Load context from stdin or file
     if args.context and args.context != "-":
@@ -163,6 +166,8 @@ def cmd_challenge(args: argparse.Namespace) -> int:
         if not valid:
             sys.exit(2)
         models = valid
+
+    warn_codex_chatgpt_model_support(models)
 
     # Load previous reviews
     if args.reviews and args.reviews != "-":
@@ -316,10 +321,51 @@ def cmd_discover_models(args: argparse.Namespace) -> int:
 
     api_key = os.environ.get("MOONSHOT_API_KEY")
     if api_key:
-        results["Moonshot (Kimi)"] = ["moonshot/kimi-k2.5", "moonshot/kimi-k2-thinking"]
+        try:
+            req = urllib.request.Request(
+                "https://api.moonshot.ai/v1/models",
+                headers={"Authorization": f"Bearer {api_key}"},
+            )
+            resp = urllib.request.urlopen(req, timeout=10)
+            data = json.loads(resp.read())
+            models = sorted(
+                m["id"] for m in data["data"]
+                if "kimi" in m["id"] and "vision" not in m["id"]
+            )
+            results["Moonshot (Kimi)"] = [f"moonshot/{m}" for m in models]
+        except Exception as e:
+            results["Moonshot (Kimi)"] = [f"[error: {e}]"]
 
     if os.environ.get("ANTHROPIC_API_KEY"):
-        results["Anthropic"] = ["claude-opus-4-6", "claude-sonnet-4-6", "claude-haiku-4-5"]
+        # No list-models endpoint — show known current models
+        results["Anthropic"] = [
+            "claude-fable-5",
+            "claude-opus-5",
+            "claude-sonnet-5",
+            "claude-haiku-4-5",
+            "claude-opus-4-7",
+            "claude-sonnet-4-6",
+        ]
+
+    from providers import ANTIGRAVITY_AVAILABLE, ANTIGRAVITY_PATH
+    if ANTIGRAVITY_AVAILABLE:
+        import subprocess
+        try:
+            proc = subprocess.run(
+                [ANTIGRAVITY_PATH, "models"],
+                capture_output=True, text=True, timeout=30,
+            )
+            slugs = []
+            for line in proc.stdout.splitlines():
+                parts = line.split("\t")
+                if len(parts) == 2 and parts[0].strip():
+                    slugs.append(parts[0].strip())
+            if slugs:
+                results["Antigravity CLI"] = [f"antigravity/{s}" for s in slugs]
+            elif proc.returncode != 0:
+                results["Antigravity CLI"] = ["[error: run `agy` once interactively to sign in]"]
+        except Exception as e:
+            results["Antigravity CLI"] = [f"[error: {e}]"]
 
     if not results:
         print("No API keys configured. Run 'crucible.py providers' for setup info.", file=sys.stderr)
