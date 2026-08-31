@@ -76,8 +76,28 @@ def is_non_retryable_error(error_msg: str) -> bool:
     return any(p in lower for p in NON_RETRYABLE_PATTERNS)
 
 
+# Anthropic models from this version up reject any temperature but 1
+# (verified 2026-08-31: claude-opus-4-7/-4-8, claude-opus-5, claude-sonnet-5 and
+# claude-fable-5 all raise UnsupportedParamsError on temperature=0.7; sonnet-4-6,
+# opus-4-6 and haiku-4-5 still accept it).
+CLAUDE_FIXED_TEMPERATURE_FROM = (4, 7)
+
+# Matches "claude-opus-5", "claude-opus-4-8", "claude-sonnet-4-6-20250627-v1:0",
+# "anthropic.claude-opus-4-7-...", "antigravity/claude-sonnet-4-6". Deliberately
+# does NOT match the legacy "claude-3-5-sonnet" ordering, which is pre-4.7.
+_CLAUDE_VERSION_RE = re.compile(r"claude-(?:opus|sonnet|haiku|fable)-(\d+)(?:[-.](\d+))?")
+
+
+def claude_version(model: str) -> Optional[tuple[int, int]]:
+    """Return (major, minor) for a Claude model id, or None if not one."""
+    m = _CLAUDE_VERSION_RE.search(model.lower())
+    if not m:
+        return None
+    return (int(m.group(1)), int(m.group(2) or 0))
+
+
 def is_reasoning_model(model: str) -> bool:
-    """Check if a model is a reasoning model (o-series, gpt-5)."""
+    """Check if a model is a reasoning model (o-series, gpt-5, Claude 4.7+)."""
     model_lower = model.lower()
     if model_lower.startswith(("o1", "o3", "o4")) or "/o1" in model_lower or "/o3" in model_lower or "/o4" in model_lower:
         return True
@@ -92,6 +112,10 @@ def is_reasoning_model(model: str) -> bool:
         m = re.search(r"kimi-k(\d+(?:\.\d+)?)", model_lower)
         if m and float(m.group(1)) >= 2.5:
             return True
+    # Anthropic Claude 4.7 and newer only accept temperature=1
+    version = claude_version(model_lower)
+    if version and version >= CLAUDE_FIXED_TEMPERATURE_FROM:
+        return True
     return False
 
 
@@ -100,6 +124,9 @@ def uses_max_completion_tokens(model: str) -> bool:
     if not is_reasoning_model(model):
         return False
     if model.lower().startswith(("xai/", "moonshot/")):
+        return False
+    # Anthropic takes max_tokens, not max_completion_tokens
+    if claude_version(model):
         return False
     return True
 

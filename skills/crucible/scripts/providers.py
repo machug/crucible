@@ -69,8 +69,6 @@ CODEX_CHATGPT_MODELS = {
     "gpt-5.6-terra",
     "gpt-5.6-luna",
     "gpt-5.5",
-    "gpt-5.4",  # retires 2026-08-31
-    "gpt-5.4-mini",  # retires 2026-08-31
     "gpt-5.3-codex-spark",  # ChatGPT Pro only
 }
 
@@ -122,6 +120,7 @@ BEDROCK_MODEL_MAP = {
     "claude-fable-5": "anthropic.claude-fable-5",
     "claude-opus-5": "anthropic.claude-opus-5",
     "claude-sonnet-5": "anthropic.claude-sonnet-5",
+    "claude-opus-4.8": "anthropic.claude-opus-4-8",
     "claude-opus-4.7": "anthropic.claude-opus-4-7-20260416-v1:0",
     "claude-sonnet-4.6": "anthropic.claude-sonnet-4-6-20250627-v1:0",
     "claude-opus-4.6": "anthropic.claude-opus-4-6-20250627-v1:0",
@@ -209,12 +208,12 @@ def get_available_providers() -> list[tuple[str, Optional[str], str]]:
         ("OpenAI", "OPENAI_API_KEY", "gpt-5.6-sol"),
         ("Anthropic", "ANTHROPIC_API_KEY", "claude-opus-5"),
         ("Google", "GEMINI_API_KEY", "gemini/gemini-3.1-pro-preview"),
-        ("xAI", "XAI_API_KEY", "xai/grok-4.5"),
+        ("xAI", "XAI_API_KEY", "xai/grok-4.6"),
         ("Mistral", "MISTRAL_API_KEY", "mistral/mistral-large"),
         ("Groq", "GROQ_API_KEY", "groq/llama-3.3-70b-versatile"),
         ("OpenRouter", "OPENROUTER_API_KEY", "openrouter/openai/gpt-5.5-pro"),
         ("Deepseek", "DEEPSEEK_API_KEY", "deepseek/deepseek-v4-pro"),
-        ("ZAI (GLM)", "ZAI_API_KEY", "zai/glm-5.2"),
+        ("ZAI (GLM)", "ZAI_API_KEY", "zai/glm-5.3"),
         ("Moonshot (Kimi)", "MOONSHOT_API_KEY", "moonshot/kimi-k3"),
         ("MiniMax", "MINIMAX_API_KEY", "minimax/MiniMax-M3"),
     ]
@@ -333,14 +332,14 @@ def list_providers():
     providers = [
         ("OpenAI", "OPENAI_API_KEY", "gpt-5.6-sol, gpt-5.6-terra, gpt-5.6-luna, gpt-5.5, gpt-5.5-pro"),
         ("Anthropic", "ANTHROPIC_API_KEY", "claude-fable-5, claude-opus-5, claude-sonnet-5, claude-haiku-4-5"),
-        ("Google", "GEMINI_API_KEY", "gemini/gemini-3.1-pro-preview, gemini/gemini-3.6-flash"),
-        ("xAI", "XAI_API_KEY", "xai/grok-4.5, xai/grok-4.3, xai/grok-4.20-0309-reasoning"),
+        ("Google", "GEMINI_API_KEY", "gemini/gemini-3.1-pro-preview, gemini/gemini-3.7-flash"),
+        ("xAI", "XAI_API_KEY", "xai/grok-4.6, xai/grok-4.5, xai/grok-4.3"),
         ("Azure AI", "AZURE_AI_API_KEY", "foundry/<deployment-name>"),
         ("Mistral", "MISTRAL_API_KEY", "mistral/mistral-large, mistral/codestral"),
         ("Groq", "GROQ_API_KEY", "groq/llama-3.3-70b-versatile"),
         ("OpenRouter", "OPENROUTER_API_KEY", "openrouter/openai/gpt-5.5-pro, openrouter/anthropic/claude-opus-5"),
         ("Deepseek", "DEEPSEEK_API_KEY", "deepseek/deepseek-v4-pro, deepseek/deepseek-v4-flash"),
-        ("ZAI (GLM)", "ZAI_API_KEY", "zai/glm-5.2, zai/glm-5.1, zai/glm-5-turbo"),
+        ("ZAI (GLM)", "ZAI_API_KEY", "zai/glm-5.3, zai/glm-5.3-flash, zai/glm-5.2"),
         ("Moonshot", "MOONSHOT_API_KEY", "moonshot/kimi-k3, moonshot/kimi-k2.7-code"),
         ("MiniMax", "MINIMAX_API_KEY", "minimax/MiniMax-M3, minimax/MiniMax-M2.7"),
     ]
