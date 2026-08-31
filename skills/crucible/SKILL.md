@@ -26,10 +26,10 @@ allowed-tools: Bash, Read, Write, Edit, Agent, AskUserQuestion, WebFetch, WebSea
           ║                                                       ║
           ║  Skill.......: crucible                               ║
           ║  Author......: machug          (hughtec.com)          ║
-          ║  Version.....: 0.2.0                                  ║
+          ║  Version.....: 0.3.0                                  ║
           ║  Released....: 2026                                   ║
           ║  License.....: MIT                                    ║
-          ║  Requires....: Python 3.10+, litellm                  ║
+          ║  Requires....: Python 3.10+ (deps auto-install)       ║
           ║                                                       ║
           ╠═══════════════════════════════════════════════════════╣
           ║                PIPELINE OVERVIEW                       ║
@@ -50,7 +50,33 @@ Multi-LLM adversarial project review. Gathers project context and sends it to mu
 
 ## Requirements
 
-- Python 3.10+ with `litellm` package installed
+- Python 3.10+
+
+## Setup: resolve the interpreter first
+
+**Run this once at the start of every session, before any other command in this skill.** It prints the path to a Python interpreter that can import `litellm`, installing the dependencies into a cached virtual environment on first use.
+
+```bash
+CRUCIBLE_PY=$(bash ${CLAUDE_PLUGIN_ROOT}/skills/crucible/scripts/bootstrap.sh)
+```
+
+Then use `"$CRUCIBLE_PY"` everywhere this skill writes `python3`. For example:
+
+```bash
+cd ${CLAUDE_PLUGIN_ROOT}/skills/crucible/scripts && "$CRUCIBLE_PY" crucible.py providers
+```
+
+The script prints only the interpreter path on stdout, so it is safe to capture. Progress messages go to stderr. It reuses an existing environment on later runs, uses `uv` when available and falls back to `python3 -m venv`, and rebuilds automatically if the environment breaks.
+
+Do not run `pip install litellm` by hand, and do not build your own virtual environment. If `bootstrap.sh` fails, report its stderr rather than improvising an install.
+
+The environment lives in `${XDG_CACHE_HOME:-~/.cache}/crucible/venv`, deliberately outside the plugin directory: plugin installs are version-keyed, so an environment stored beside the code would be rebuilt on every plugin update. Override the location with `CRUCIBLE_VENV`.
+
+**Checking the installed version:** `litellm` has no `__version__` attribute. Use `importlib.metadata.version("litellm")`. Reading `litellm.__version__` raises `AttributeError` and makes a working install look broken.
+
+## Claude model behavior
+
+Claude Opus 4.7 and newer — including Claude Opus 5, Sonnet 5, and Fable 5 — accept only `temperature=1`. `models.py` detects these and omits the parameter, and keeps `max_tokens` rather than `max_completion_tokens` for them. Claude Sonnet 4.6, Opus 4.6, and Haiku 4.5 still accept a temperature and are unchanged.
 - API key for at least one provider (set via environment variable)
 
 **IMPORTANT: Do NOT install the `llm` package.** This skill uses `litellm` for API providers.

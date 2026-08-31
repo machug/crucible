@@ -1,6 +1,6 @@
 {
   "name": "crucible",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Multi-LLM adversarial project review. Evaluates progress, tech stack, code quality, CI/CD, and plan drift through parallel critique from multiple AI models.",
   "author": {
     "name": "Hugh McIntyre"
@@ -8,6 +8,15 @@
   "homepage": "https://hughtec.com",
   "repository": "https://github.com/machug/crucible",
   "license": "MIT",
-  "keywords": ["review", "adversarial", "project", "code-quality", "ci-cd", "multi-llm", "audit", "crucible"],
+  "keywords": [
+    "review",
+    "adversarial",
+    "project",
+    "code-quality",
+    "ci-cd",
+    "multi-llm",
+    "audit",
+    "crucible"
+  ],
   "skills": "./skills/"
 }

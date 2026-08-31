@@ -79,7 +79,10 @@ other models need API-key auth. Crucible warns upfront and fails fast on these r
 ## Requirements
 
 - Python 3.10+
-- `pip install litellm`
+- Dependencies install themselves. `skills/crucible/scripts/bootstrap.sh` prints an interpreter that can
+  import `litellm`, creating a cached environment in `${XDG_CACHE_HOME:-~/.cache}/crucible/venv` on first
+  use: `CRUCIBLE_PY=$(bash skills/crucible/scripts/bootstrap.sh)`. To install by hand instead, use
+  `pip install -r requirements.txt`.
 - At least one provider API key
 
 ## CLI
