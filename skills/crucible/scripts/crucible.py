@@ -7,9 +7,9 @@ a different adversarial persona and dimension. Produces a structured report
 with severity ratings and actionable recommendations.
 
 Usage:
-    python3 crucible.py review --models gpt-5.6-sol,xai/grok-4.5 --context context.json
+    python3 crucible.py review --models gpt-5.6-sol,xai/grok-4.7 --context context.json
     python3 crucible.py review --models gpt-5.6-sol --context context.json --dimensions progress,code-quality
-    python3 crucible.py challenge --models gpt-5.6-sol,xai/grok-4.5 --reviews reviews.json
+    python3 crucible.py challenge --models gpt-5.6-sol,xai/grok-4.7 --reviews reviews.json
     python3 crucible.py providers
     python3 crucible.py discover-models
     python3 crucible.py dimensions
@@ -269,7 +269,7 @@ def cmd_discover_models(args: argparse.Namespace) -> int:
             data = json.loads(resp.read())
             models = sorted(
                 m["id"] for m in data["data"]
-                if any(k in m["id"] for k in ("gpt-4.1", "gpt-5", "o1", "o3", "o4"))
+                if any(k in m["id"] for k in ("gpt-4.1", "gpt-5", "gpt-6", "o1", "o3", "o4"))
                 and not any(k in m["id"] for k in ("audio", "realtime", "tts", "transcribe", "search", "image", "embed"))
             )
             results["OpenAI"] = models
@@ -341,16 +341,19 @@ def cmd_discover_models(args: argparse.Namespace) -> int:
         except Exception as e:
             results["Moonshot (Kimi)"] = [f"[error: {e}]"]
 
-    if os.environ.get("ANTHROPIC_API_KEY"):
-        # No list-models endpoint — show known current models
-        results["Anthropic"] = [
-            "claude-fable-5",
-            "claude-opus-5",
-            "claude-sonnet-5",
-            "claude-haiku-4-5",
-            "claude-opus-4-7",
-            "claude-sonnet-4-6",
-        ]
+    api_key = os.environ.get("ANTHROPIC_API_KEY")
+    if api_key:
+        # GET /v1/models returns newest first
+        try:
+            req = urllib.request.Request(
+                "https://api.anthropic.com/v1/models?limit=100",
+                headers={"x-api-key": api_key, "anthropic-version": "2023-06-01"},
+            )
+            resp = urllib.request.urlopen(req, timeout=10)
+            data = json.loads(resp.read())
+            results["Anthropic"] = [m["id"] for m in data["data"]]
+        except Exception as e:
+            results["Anthropic"] = [f"[error: {e}]"]
 
     from providers import ANTIGRAVITY_AVAILABLE, ANTIGRAVITY_PATH
     if ANTIGRAVITY_AVAILABLE:
