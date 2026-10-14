@@ -60,16 +60,20 @@ GEMINI_CLI_AVAILABLE = GEMINI_CLI_PATH is not None
 ANTIGRAVITY_AVAILABLE = ANTIGRAVITY_PATH is not None
 
 DEFAULT_CODEX_REASONING = "xhigh"
+# Codex effort levels (codex debug models, 2026-10-14). Luna models stop at max.
+CODEX_REASONING_LEVELS = ("low", "medium", "high", "xhigh", "max", "ultra")
 
 # Models Codex CLI serves when authenticated with a ChatGPT account (not an
 # API key). Rotates with OpenAI's ChatGPT lineup — see
-# https://developers.openai.com/codex/models. Last verified 2026-08-10.
+# https://developers.openai.com/codex/models. Last verified 2026-10-14.
 CODEX_CHATGPT_MODELS = {
+    "gpt-6.1-sol",
+    "gpt-6-sol",
+    "gpt-6-luna",
     "gpt-6-astra",  # rolling out to Pro, Business ($100) and Enterprise plans
     "gpt-5.6-sol",
     "gpt-5.6-terra",
     "gpt-5.6-luna",
-    "gpt-5.5",  # retires from ChatGPT-account Codex 2026-10-14
     "gpt-5.3-codex-spark",  # ChatGPT Pro only
 }
 
@@ -108,7 +112,7 @@ def warn_codex_chatgpt_model_support(models: list[str]) -> None:
         print(
             f"Warning: Codex CLI is authenticated with a ChatGPT account, which "
             f"likely rejects: {', '.join(unsupported)}. ChatGPT-account models "
-            f"(as of 2026-09-22): gpt-6-astra (eligible plans), gpt-5.6-sol, gpt-5.6-terra, gpt-5.6-luna, gpt-5.5 (until 2026-10-14). "
+            f"(as of 2026-10-14): gpt-6.1-sol, gpt-6-sol, gpt-6-luna, gpt-6-astra (eligible plans), gpt-5.6-sol, gpt-5.6-terra, gpt-5.6-luna. "
             f"Other models need Codex API-key auth or the OPENAI_API_KEY route.\n",
             file=sys.stderr,
         )
@@ -206,9 +210,9 @@ def validate_bedrock_models(models: list[str], config: Optional[dict] = None) ->
 def get_available_providers() -> list[tuple[str, Optional[str], str]]:
     """Get list of providers with configured API keys."""
     providers = [
-        ("OpenAI", "OPENAI_API_KEY", "gpt-5.6-sol"),
-        ("Anthropic", "ANTHROPIC_API_KEY", "claude-opus-5"),
-        ("Google", "GEMINI_API_KEY", "gemini/gemini-3.1-pro-preview"),
+        ("OpenAI", "OPENAI_API_KEY", "gpt-6.1-sol"),
+        ("Anthropic", "ANTHROPIC_API_KEY", "claude-opus-5-5"),
+        ("Google", "GEMINI_API_KEY", "gemini/gemini-4-argon"),
         ("xAI", "XAI_API_KEY", "xai/grok-4.7"),
         ("Mistral", "MISTRAL_API_KEY", "mistral/mistral-large"),
         ("Groq", "GROQ_API_KEY", "groq/llama-3.3-70b-versatile"),
@@ -225,12 +229,12 @@ def get_available_providers() -> list[tuple[str, Optional[str], str]]:
             available.append((name, key, model))
 
     if CODEX_AVAILABLE:
-        available.append(("Codex CLI", None, "codex/gpt-5.6-sol"))
+        available.append(("Codex CLI", None, "codex/gpt-6.1-sol"))
     # Antigravity CLI is Gemini CLI's successor (consumer gemini-cli retired
     # 2026-06-18); gemini-cli/ still works if requested explicitly but is no
     # longer auto-selected.
     if ANTIGRAVITY_AVAILABLE:
-        available.append(("Antigravity CLI", None, "antigravity/gemini-3.1-pro-high"))
+        available.append(("Antigravity CLI", None, "antigravity/gemini-3.8-flash-high"))
 
     return available
 
@@ -331,9 +335,9 @@ def describe_invalid_models(invalid: list[str]) -> list[str]:
 def list_providers():
     """List all supported providers and their API key status."""
     providers = [
-        ("OpenAI", "OPENAI_API_KEY", "gpt-6-astra, gpt-5.6-sol, gpt-5.6-terra, gpt-5.6-luna, gpt-5.5, gpt-5.5-pro"),
-        ("Anthropic", "ANTHROPIC_API_KEY", "claude-fable-5-1, claude-opus-5, claude-sonnet-5, claude-fable-5, claude-haiku-4-5"),
-        ("Google", "GEMINI_API_KEY", "gemini/gemini-3.1-pro-preview, gemini/gemini-3.8-flash, gemini/gemini-3.7-flash"),
+        ("OpenAI", "OPENAI_API_KEY", "gpt-6.1-sol, gpt-6-sol, gpt-6-luna, gpt-6-astra, gpt-5.6-sol, gpt-5.6-terra, gpt-5.5-pro"),
+        ("Anthropic", "ANTHROPIC_API_KEY", "claude-opus-5-5, claude-sonnet-5-5, claude-haiku-5-5, claude-fable-5-1, claude-opus-5, claude-sonnet-5"),
+        ("Google", "GEMINI_API_KEY", "gemini/gemini-4-argon, gemini/gemini-3.1-pro-preview, gemini/gemini-3.8-flash"),
         ("xAI", "XAI_API_KEY", "xai/grok-4.7, xai/grok-4.6, xai/grok-4.5"),
         ("Azure AI", "AZURE_AI_API_KEY", "foundry/<deployment-name>"),
         ("Mistral", "MISTRAL_API_KEY", "mistral/mistral-large, mistral/codestral"),
@@ -357,9 +361,9 @@ def list_providers():
     print(f"  {'Codex CLI':12} {'(ChatGPT subscription)':24} {codex_status}")
     if auth_mode:
         print(f"             Auth mode: {auth_mode}")
-    print("             Example models: codex/gpt-6-astra, codex/gpt-5.6-sol, codex/gpt-5.6-terra, codex/gpt-5.5")
-    print("             Note: ChatGPT-account auth serves only the ChatGPT lineup (gpt-6-astra on eligible plans, gpt-5.6-sol/terra/luna,")
-    print("                   gpt-5.5 until 2026-10-14). gpt-5.3-codex and gpt-5.5-pro need API-key auth or OPENAI_API_KEY.")
+    print("             Example models: codex/gpt-6.1-sol, codex/gpt-6-sol, codex/gpt-6-astra, codex/gpt-5.6-sol")
+    print("             Note: ChatGPT-account auth serves only the ChatGPT lineup (gpt-6.1-sol, gpt-6-sol/luna, gpt-6-astra on eligible plans,")
+    print("                   gpt-5.6-sol/terra/luna; gpt-5.5 retired 2026-10-14). gpt-5.3-codex and gpt-5.5-pro need API-key auth or OPENAI_API_KEY.")
     print()
 
     agy_status = "[installed]" if ANTIGRAVITY_AVAILABLE else "[not installed]"

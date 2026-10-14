@@ -49,6 +49,7 @@ from prompts import (
     CHALLENGE_PROMPT_TEMPLATE,
 )
 from providers import (
+    CODEX_REASONING_LEVELS,
     describe_invalid_models,
     get_available_providers,
     list_providers,
@@ -286,7 +287,7 @@ def cmd_discover_models(args: argparse.Namespace) -> int:
             data = json.loads(resp.read())
             models = sorted(
                 m["name"].replace("models/", "") for m in data["models"]
-                if any(k in m["name"] for k in ("gemini-2.5", "gemini-3", "gemini-pro", "gemini-flash"))
+                if any(k in m["name"] for k in ("gemini-2.5", "gemini-3", "gemini-4", "gemini-pro", "gemini-flash"))
                 and not any(k in m["name"] for k in ("tts", "image", "audio", "live"))
             )
             results["Google Gemini"] = [f"gemini/{m}" for m in models]
@@ -421,7 +422,10 @@ def main():
     p_review.add_argument("--context", help="Path to context JSON file (or stdin)")
     p_review.add_argument("--dimensions", help="Comma-separated dimensions to review (default: all)")
     p_review.add_argument("--persona", help="Override persona for all reviewers")
-    p_review.add_argument("--codex-reasoning", default="xhigh", help="Codex reasoning effort")
+    p_review.add_argument(
+        "--codex-reasoning", default="xhigh", choices=CODEX_REASONING_LEVELS,
+        help="Codex reasoning effort (low..ultra; luna models have no ultra)",
+    )
     p_review.add_argument("--timeout", type=int, default=600, help="Per-model timeout in seconds")
 
     # challenge
