@@ -85,9 +85,9 @@ Claude Opus 4.7 and newer — including Claude Opus 5, Sonnet 5, and Fable 5 —
 
 | Provider   | API Key Env Var        | Example Models |
 |------------|------------------------|----------------|
-| OpenAI     | `OPENAI_API_KEY`       | `gpt-6-astra`, `gpt-5.6-sol`, `gpt-5.6-terra`, `gpt-5.6-luna`, `gpt-5.5`, `gpt-5.5-pro` |
-| Anthropic  | `ANTHROPIC_API_KEY`    | `claude-fable-5-1`, `claude-opus-5`, `claude-sonnet-5`, `claude-fable-5`, `claude-haiku-4-5` |
-| Google     | `GEMINI_API_KEY`       | `gemini/gemini-3.1-pro-preview`, `gemini/gemini-3.8-flash` |
+| OpenAI     | `OPENAI_API_KEY`       | `gpt-6.1-sol`, `gpt-6-sol`, `gpt-6-luna`, `gpt-6-astra`, `gpt-5.6-sol`, `gpt-5.5`, `gpt-5.5-pro` |
+| Anthropic  | `ANTHROPIC_API_KEY`    | `claude-opus-5-5`, `claude-sonnet-5-5`, `claude-haiku-5-5`, `claude-fable-5-1`, `claude-opus-5`, `claude-sonnet-5` |
+| Google     | `GEMINI_API_KEY`       | `gemini/gemini-4-argon`, `gemini/gemini-3.1-pro-preview`, `gemini/gemini-3.8-flash` |
 | xAI        | `XAI_API_KEY`          | `xai/grok-4.7`, `xai/grok-4.6`, `xai/grok-4.5` |
 | Azure AI   | `AZURE_AI_API_KEY`     | `foundry/<deployment-name>` |
 | Mistral    | `MISTRAL_API_KEY`      | `mistral/mistral-large` |
@@ -97,13 +97,13 @@ Claude Opus 4.7 and newer — including Claude Opus 5, Sonnet 5, and Fable 5 —
 | ZAI (GLM)  | `ZAI_API_KEY`          | `zai/glm-5.2`, `zai/glm-5.1` |
 | Moonshot   | `MOONSHOT_API_KEY`     | `moonshot/kimi-k3` |
 | MiniMax    | `MINIMAX_API_KEY`      | `minimax/MiniMax-M3` |
-| Codex CLI  | (ChatGPT subscription) | `codex/gpt-6-astra` (eligible plans), `codex/gpt-5.6-sol`, `codex/gpt-5.5` |
-| Antigravity | (Google account)      | `antigravity/gemini-3.8-flash-high`, `antigravity/gemini-3.1-pro-high` (`agy models` lists all) |
+| Codex CLI  | (ChatGPT subscription) | `codex/gpt-6.1-sol`, `codex/gpt-6-sol`, `codex/gpt-6-astra` (eligible plans), `codex/gpt-5.6-sol` |
+| Antigravity | (Google account)      | `antigravity/gemini-3.8-flash-high` (`agy models` lists all) |
 | Gemini CLI | (retired 2026-06-18)   | `gemini-cli/...` — enterprise only; use `antigravity/` or `gemini/` |
 
 **Codex CLI note:** With ChatGPT-account auth, Codex serves only the ChatGPT lineup
-(`gpt-6-astra` on eligible plans, `gpt-5.6-sol`/`terra`/`luna`, `gpt-5.5` until it retires
-on 2026-10-14). `gpt-5.3-codex` and `gpt-5.5-pro` need Codex API-key auth or the `OPENAI_API_KEY` route. Crucible warns upfront and
+(`gpt-6.1-sol`, `gpt-6-sol`/`luna`, `gpt-6-astra` on eligible plans, `gpt-5.6-sol`/`terra`/`luna`;
+`gpt-5.5` retired 2026-10-14). `gpt-5.3-codex` and `gpt-5.5-pro` need Codex API-key auth or the `OPENAI_API_KEY` route. Crucible warns upfront and
 fails fast (no retries) on these deterministic rejections.
 
 **Antigravity note:** Run `agy` once interactively (Google sign-in) before
