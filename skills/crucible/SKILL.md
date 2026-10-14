@@ -98,7 +98,7 @@ Claude Opus 4.7 and newer — including Claude Opus 5, Sonnet 5, and Fable 5 —
 | Moonshot   | `MOONSHOT_API_KEY`     | `moonshot/kimi-k3` |
 | MiniMax    | `MINIMAX_API_KEY`      | `minimax/MiniMax-M3` |
 | Codex CLI  | (ChatGPT subscription) | `codex/gpt-6.1-sol`, `codex/gpt-6-sol`, `codex/gpt-6-astra` (eligible plans), `codex/gpt-5.6-sol` |
-| Antigravity | (Google account)      | `antigravity/gemini-3.8-flash-high`, `antigravity/gemini-3.1-pro-high` (`agy models` lists all) |
+| Antigravity | (Google account)      | `antigravity/gemini-3.8-flash-high` (`agy models` lists all) |
 | Gemini CLI | (retired 2026-06-18)   | `gemini-cli/...` — enterprise only; use `antigravity/` or `gemini/` |
 
 **Codex CLI note:** With ChatGPT-account auth, Codex serves only the ChatGPT lineup

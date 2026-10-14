@@ -70,7 +70,7 @@ Any provider supported by [litellm](https://github.com/BerriAI/litellm), includi
 | Moonshot (Kimi) | `MOONSHOT_API_KEY` | `moonshot/kimi-k3` |
 | MiniMax | `MINIMAX_API_KEY` | `minimax/MiniMax-M3` |
 | Codex CLI | (ChatGPT sub) | `codex/gpt-6.1-sol`, `codex/gpt-6-sol`, `codex/gpt-6-astra` (eligible plans), `codex/gpt-5.6-sol` |
-| Antigravity CLI | (Google account) | `antigravity/gemini-3.8-flash-high`, `antigravity/gemini-3.1-pro-high` |
+| Antigravity CLI | (Google account) | `antigravity/gemini-3.8-flash-high` |
 | Gemini CLI | (retired 2026-06-18) | enterprise only — use `antigravity/` or `gemini/` |
 
 **Codex note:** ChatGPT-account auth serves only the ChatGPT lineup (`gpt-6.1-sol`, `gpt-6-sol`/`luna`, `gpt-6-astra` on eligible plans, `gpt-5.6-sol`/`terra`/`luna`; `gpt-5.5` retired 2026-10-14);
