@@ -65,9 +65,10 @@ CODEX_REASONING_LEVELS = ("low", "medium", "high", "xhigh", "max", "ultra")
 
 # Models Codex CLI serves when authenticated with a ChatGPT account (not an
 # API key). Rotates with OpenAI's ChatGPT lineup — see
-# https://developers.openai.com/codex/models. Last verified 2026-10-14.
+# https://developers.openai.com/codex/models. Last verified 2026-11-12.
 CODEX_CHATGPT_MODELS = {
     "gpt-6.1-sol",
+    "gpt-6.1-terra",
     "gpt-6-sol",
     "gpt-6-luna",
     "gpt-6-astra",  # rolling out to Pro, Business ($100) and Enterprise plans
@@ -112,7 +113,7 @@ def warn_codex_chatgpt_model_support(models: list[str]) -> None:
         print(
             f"Warning: Codex CLI is authenticated with a ChatGPT account, which "
             f"likely rejects: {', '.join(unsupported)}. ChatGPT-account models "
-            f"(as of 2026-10-14): gpt-6.1-sol, gpt-6-sol, gpt-6-luna, gpt-6-astra (eligible plans), gpt-5.6-sol, gpt-5.6-terra, gpt-5.6-luna. "
+            f"(as of 2026-11-12): gpt-6.1-sol, gpt-6.1-terra, gpt-6-sol, gpt-6-luna, gpt-6-astra (eligible plans), gpt-5.6-sol, gpt-5.6-terra, gpt-5.6-luna. "
             f"Other models need Codex API-key auth or the OPENAI_API_KEY route.\n",
             file=sys.stderr,
         )
@@ -335,18 +336,18 @@ def describe_invalid_models(invalid: list[str]) -> list[str]:
 def list_providers():
     """List all supported providers and their API key status."""
     providers = [
-        ("OpenAI", "OPENAI_API_KEY", "gpt-6.1-sol, gpt-6-sol, gpt-6-luna, gpt-6-astra, gpt-5.6-sol, gpt-5.6-terra, gpt-5.5-pro"),
-        ("Anthropic", "ANTHROPIC_API_KEY", "claude-opus-5-5, claude-sonnet-5-5, claude-haiku-5-5, claude-fable-5-1, claude-opus-5, claude-sonnet-5"),
-        ("Google", "GEMINI_API_KEY", "gemini/gemini-4-argon, gemini/gemini-3.1-pro-preview, gemini/gemini-3.8-flash"),
-        ("xAI", "XAI_API_KEY", "xai/grok-4.7, xai/grok-4.6, xai/grok-4.5"),
+        ("OpenAI", "OPENAI_API_KEY", "gpt-6.1-sol, gpt-6.1-terra, gpt-6-sol, gpt-6-luna, gpt-6-astra, gpt-5.6-sol, gpt-5.6-terra, gpt-5.5-pro"),
+        ("Anthropic", "ANTHROPIC_API_KEY", "claude-opus-5-5, claude-sonnet-5-5, claude-haiku-5-5, claude-fable-5-2, claude-fable-5-1, claude-opus-5, claude-sonnet-5"),
+        ("Google", "GEMINI_API_KEY", "gemini/gemini-4-argon, gemini/gemini-4-carbon, gemini/gemini-3.1-pro-preview, gemini/gemini-3.8-flash"),
+        ("xAI", "XAI_API_KEY", "xai/grok-4.7, xai/grok-build-0.1, xai/grok-4.6, xai/grok-4.5"),
         ("Azure AI", "AZURE_AI_API_KEY", "foundry/<deployment-name>"),
         ("Mistral", "MISTRAL_API_KEY", "mistral/mistral-large, mistral/codestral"),
         ("Groq", "GROQ_API_KEY", "groq/llama-3.3-70b-versatile"),
         ("OpenRouter", "OPENROUTER_API_KEY", "openrouter/openai/gpt-5.5-pro, openrouter/anthropic/claude-opus-5"),
         ("Deepseek", "DEEPSEEK_API_KEY", "deepseek/deepseek-v4-pro, deepseek/deepseek-flash"),
         ("ZAI (GLM)", "ZAI_API_KEY", "zai/glm-5.3, zai/glm-5.3-flash, zai/glm-5.2"),
-        ("Moonshot", "MOONSHOT_API_KEY", "moonshot/kimi-k3, moonshot/kimi-k2.7-code"),
-        ("MiniMax", "MINIMAX_API_KEY", "minimax/MiniMax-M3, minimax/MiniMax-M2.7"),
+        ("Moonshot", "MOONSHOT_API_KEY", "moonshot/kimi-k3.1-pro, moonshot/kimi-k3, moonshot/kimi-k2.7-code"),
+        ("MiniMax", "MINIMAX_API_KEY", "minimax/MiniMax-M3, minimax/MiniMax-M3.1-Flash, minimax/MiniMax-M2.7"),
     ]
 
     print("Supported providers:\n")
@@ -361,8 +362,8 @@ def list_providers():
     print(f"  {'Codex CLI':12} {'(ChatGPT subscription)':24} {codex_status}")
     if auth_mode:
         print(f"             Auth mode: {auth_mode}")
-    print("             Example models: codex/gpt-6.1-sol, codex/gpt-6-sol, codex/gpt-6-astra, codex/gpt-5.6-sol")
-    print("             Note: ChatGPT-account auth serves only the ChatGPT lineup (gpt-6.1-sol, gpt-6-sol/luna, gpt-6-astra on eligible plans,")
+    print("             Example models: codex/gpt-6.1-sol, codex/gpt-6.1-terra, codex/gpt-6-sol, codex/gpt-6-astra, codex/gpt-5.6-sol")
+    print("             Note: ChatGPT-account auth serves only the ChatGPT lineup (gpt-6.1-sol/terra, gpt-6-sol/luna, gpt-6-astra on eligible plans,")
     print("                   gpt-5.6-sol/terra/luna; gpt-5.5 retired 2026-10-14). gpt-5.3-codex and gpt-5.5-pro need API-key auth or OPENAI_API_KEY.")
     print()
 
