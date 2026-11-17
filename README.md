@@ -58,7 +58,7 @@ Any provider supported by [litellm](https://github.com/BerriAI/litellm), includi
 
 | Provider | Env Var | Example Models |
 |----------|---------|----------------|
-| OpenAI | `OPENAI_API_KEY` | `gpt-6.1-sol`, `gpt-6.1-terra`, `gpt-6-sol`, `gpt-6-luna`, `gpt-6-astra`, `gpt-5.6-sol`, `gpt-5.5`, `gpt-5.5-pro` |
+| OpenAI | `OPENAI_API_KEY` | `gpt-6.2-sol`, `gpt-6.2-astra`, `gpt-6.1-sol`, `gpt-6.1-terra`, `gpt-6-sol`, `gpt-6-luna`, `gpt-6-astra`, `gpt-5.6-sol`, `gpt-5.5`, `gpt-5.5-pro` |
 | Google | `GEMINI_API_KEY` | `gemini/gemini-4-argon`, `gemini/gemini-4-carbon`, `gemini/gemini-3.1-pro-preview`, `gemini/gemini-3.8-flash` |
 | xAI | `XAI_API_KEY` | `xai/grok-4.7`, `xai/grok-build-0.1`, `xai/grok-4.6` |
 | Anthropic | `ANTHROPIC_API_KEY` | `claude-opus-5-5`, `claude-sonnet-5-5`, `claude-haiku-5-5`, `claude-fable-5-2`, `claude-fable-5-1`, `claude-opus-5` |
@@ -69,11 +69,11 @@ Any provider supported by [litellm](https://github.com/BerriAI/litellm), includi
 | ZAI (GLM) | `ZAI_API_KEY` | `zai/glm-5.2` |
 | Moonshot (Kimi) | `MOONSHOT_API_KEY` | `moonshot/kimi-k3.1-pro`, `moonshot/kimi-k3` |
 | MiniMax | `MINIMAX_API_KEY` | `minimax/MiniMax-M3`, `minimax/MiniMax-M3.1-Flash` |
-| Codex CLI | (ChatGPT sub) | `codex/gpt-6.1-sol`, `codex/gpt-6.1-terra`, `codex/gpt-6-sol`, `codex/gpt-6-astra` (eligible plans), `codex/gpt-5.6-sol` |
+| Codex CLI | (ChatGPT sub) | `codex/gpt-6.2-sol`, `codex/gpt-6.2-astra`, `codex/gpt-6.1-sol`, `codex/gpt-6.1-terra`, `codex/gpt-6-sol`, `codex/gpt-6-astra` (eligible plans), `codex/gpt-5.6-sol` |
 | Antigravity CLI | (Google account) | `antigravity/gemini-3.8-flash-high`, `antigravity/gemini-4-argon-high` |
 | Gemini CLI | (retired 2026-06-18) | enterprise only — use `antigravity/` or `gemini/` |
 
-**Codex note:** ChatGPT-account auth serves only the ChatGPT lineup (`gpt-6.1-sol`/`terra`, `gpt-6-sol`/`luna`, `gpt-6-astra` on eligible plans, `gpt-5.6-sol`/`terra`/`luna`; `gpt-5.5` retired 2026-10-14);
+**Codex note:** ChatGPT-account auth serves only the ChatGPT lineup (`gpt-6.2-sol`/`astra`, `gpt-6.1-sol`/`terra`, `gpt-6-sol`/`luna`, `gpt-6-astra` on eligible plans, `gpt-5.6-sol`/`terra`/`luna`; `gpt-5.5` retired 2026-10-14);
 other models need API-key auth. Crucible warns upfront and fails fast on these rejections.
 
 ## Requirements

@@ -85,7 +85,7 @@ Claude Opus 4.7 and newer — including Claude Opus 5, Sonnet 5, Fable 5, Fable 
 
 | Provider   | API Key Env Var        | Example Models |
 |------------|------------------------|----------------|
-| OpenAI     | `OPENAI_API_KEY`       | `gpt-6.1-sol`, `gpt-6.1-terra`, `gpt-6-sol`, `gpt-6-luna`, `gpt-6-astra`, `gpt-5.6-sol`, `gpt-5.5`, `gpt-5.5-pro` |
+| OpenAI     | `OPENAI_API_KEY`       | `gpt-6.2-sol`, `gpt-6.2-astra`, `gpt-6.1-sol`, `gpt-6.1-terra`, `gpt-6-sol`, `gpt-6-luna`, `gpt-6-astra`, `gpt-5.6-sol`, `gpt-5.5`, `gpt-5.5-pro` |
 | Anthropic  | `ANTHROPIC_API_KEY`    | `claude-opus-5-5`, `claude-sonnet-5-5`, `claude-haiku-5-5`, `claude-fable-5-2`, `claude-fable-5-1`, `claude-opus-5`, `claude-sonnet-5` |
 | Google     | `GEMINI_API_KEY`       | `gemini/gemini-4-argon`, `gemini/gemini-4-carbon`, `gemini/gemini-3.1-pro-preview`, `gemini/gemini-3.8-flash` |
 | xAI        | `XAI_API_KEY`          | `xai/grok-4.7`, `xai/grok-build-0.1`, `xai/grok-4.6`, `xai/grok-4.5` |
@@ -97,12 +97,12 @@ Claude Opus 4.7 and newer — including Claude Opus 5, Sonnet 5, Fable 5, Fable 
 | ZAI (GLM)  | `ZAI_API_KEY`          | `zai/glm-5.2`, `zai/glm-5.1` |
 | Moonshot   | `MOONSHOT_API_KEY`     | `moonshot/kimi-k3.1-pro`, `moonshot/kimi-k3` |
 | MiniMax    | `MINIMAX_API_KEY`      | `minimax/MiniMax-M3`, `minimax/MiniMax-M3.1-Flash` |
-| Codex CLI  | (ChatGPT subscription) | `codex/gpt-6.1-sol`, `codex/gpt-6.1-terra`, `codex/gpt-6-sol`, `codex/gpt-6-astra` (eligible plans), `codex/gpt-5.6-sol` |
+| Codex CLI  | (ChatGPT subscription) | `codex/gpt-6.2-sol`, `codex/gpt-6.2-astra`, `codex/gpt-6.1-sol`, `codex/gpt-6.1-terra`, `codex/gpt-6-sol`, `codex/gpt-6-astra` (eligible plans), `codex/gpt-5.6-sol` |
 | Antigravity | (Google account)      | `antigravity/gemini-3.8-flash-high`, `antigravity/gemini-4-argon-high` (`agy models` lists all) |
 | Gemini CLI | (retired 2026-06-18)   | `gemini-cli/...` — enterprise only; use `antigravity/` or `gemini/` |
 
 **Codex CLI note:** With ChatGPT-account auth, Codex serves only the ChatGPT lineup
-(`gpt-6.1-sol`/`terra`, `gpt-6-sol`/`luna`, `gpt-6-astra` on eligible plans, `gpt-5.6-sol`/`terra`/`luna`;
+(`gpt-6.2-sol`/`astra`, `gpt-6.1-sol`/`terra`, `gpt-6-sol`/`luna`, `gpt-6-astra` on eligible plans, `gpt-5.6-sol`/`terra`/`luna`;
 `gpt-5.5` retired 2026-10-14). `gpt-5.3-codex` and `gpt-5.5-pro` need Codex API-key auth or the `OPENAI_API_KEY` route. Crucible warns upfront and
 fails fast (no retries) on these deterministic rejections.
 
