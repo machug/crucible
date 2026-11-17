@@ -76,6 +76,8 @@ Any provider supported by [litellm](https://github.com/BerriAI/litellm), includi
 **Codex note:** ChatGPT-account auth serves only the ChatGPT lineup (`gpt-6.2-sol`/`astra`, `gpt-6.1-sol`/`terra`, `gpt-6-sol`/`luna`, `gpt-6-astra` on eligible plans, `gpt-5.6-sol`/`terra`/`luna`; `gpt-5.5` retired 2026-10-14);
 other models need API-key auth. Crucible warns upfront and fails fast on these rejections.
 
+**Gemini note:** The lightest Gemini route is a free key from [Google AI Studio](https://aistudio.google.com/apikey): `export GEMINI_API_KEY=...` and use `gemini/` models, nothing else to install. If you set the key with Google's `gemini-api configure`, it lives in the OS keychain and this skill cannot see it; export it as well.
+
 ## Requirements
 
 - Python 3.10+
